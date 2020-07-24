@@ -1,0 +1,151 @@
+class Person:
+    first_name = ""
+    second_name = ""
+    l_country = ""
+    l_city = ""
+    l_street = ""
+    phone_number = int()
+
+    def init(self, first_name=None, second_name=None, l_country=None, l_city=None, l_street=None, phone_number=None, from_strings=None):
+        if from_strings is None:
+            self.first_name = first_name
+            self.second_name = second_name
+            self.l_country = l_country
+            self.l_city = l_city
+            self.l_street = l_street
+            self.phone_number = phone_number
+        else:
+            self.first_name, self.second_name, self.l_country, self.l_city, self.l_street, self.phone_number = str(from_strings).replace(" ", '').split("|")
+
+    def input_data(self):
+        self.first_name = input("Введите фамилию пользователя:  ").capitalize()
+        self.second_name = input("Введите имя пользователя:  ").capitalize()
+        self.l_country = input("Введите страну пользователя:  ").capitalize()
+        self.l_city = input("Введите город пользователя:  ").capitalize()
+        self.l_street = input("Введите улицу пользователя:  ").capitalize()
+        self.phone_number = input("Введите номер телефона пользователя:  ").capitalize()
+
+    def input_edit_data(self):
+        self.first_name = input("Введите новую фамилию пользователя:  ").capitalize()
+        self.second_name = input("Введите новое имя пользователя:  ").capitalize()
+        self.l_country = input("Введите новую страну пользователя:  ").capitalize()
+        self.l_city = input("Введите новый город пользователя:  ").capitalize()
+        self.l_street = input("Введите новую улицу пользователя:  ").capitalize()
+        self.phone_number = input("Введите новый номер телефона пользователя:  ").capitalize()
+
+    def str(self):
+        return '{0} | {1} | {2} | {3} | {4} | {5} '.format(self.first_name, self.second_name, self.l_country, self.l_city, self.l_street, self.phone_number) + '\n'
+
+
+def find_person(request):
+    with open('data.txt') as file:
+        for strings in file:
+            person = Person(from_strings=strings)
+            if (person.first_name, person.second_name) == request:
+                return person
+
+
+
+class Users:
+
+    def add_person(self):
+        p = Person()
+        p.input_data()
+        if find_person(request=(p.first_name, p.second_name)) is None:
+            f = open('data.txt', 'a')
+            f.write('{0} | {1} | {2} | {3} | {4} | {5} '.format(p.first_name, p.second_name, p.l_country, p.l_city, p.l_street, p.phone_number) + "\n")
+            print('\n Пользователь {0} {1} проживающий в городе {2} успешно добавлен\n'.format(p.first_name, p.second_name, p.l_city))
+            f.close()
+        else:
+            print('\nТакой пользователь уже уществует \n')
+
+    def delete_person(self, requery):
+        with open('data.txt') as oldfile, open('newfile.txt', 'w') as newfile:
+            for strings in oldfile:
+                if not any(requery in strings for requery in requery):
+                    newfile.write(strings)
+        oldfile.close()
+        newfile.close()
+        f = open('data.txt', 'w+')
+        f.seek(0)
+        f.close()
+        del oldfile
+        del newfile
+        with open('data.txt', 'w+') as newfile, open('newfile.txt') as oldfile:
+            for strings in oldfile:
+                if not any(requery in strings for requery in requery):
+                    newfile.write(strings)
+
+
+    def show_all_users(self):
+        with open('data.txt') as file:
+            for strings in file:
+                pers = Person(from_strings=strings)
+                print("Пользователь - ", pers)
+def edit_person(self, requery):
+        p = Person()
+        f = open('data.txt', 'a')
+        print('\n')
+        with open('data.txt') as oldfile, open('newfile.txt', 'w') as newfile:
+            for strings in oldfile:
+                if not any(requery in strings for requery in requery):
+                    newfile.write(strings)
+        oldfile.close()
+        newfile.close()
+        f = open('data.txt', 'w+')
+        f.seek(0)
+        f.close()
+        del oldfile
+        del newfile
+        with open('data.txt', 'w+') as newfile, open('newfile.txt') as oldfile:
+            for strings in oldfile:
+                if not any(requery in strings for requery in requery):
+                    newfile.write(strings)
+        f = open('data.txt', 'a')
+        p.input_edit_data()
+        f.write(
+            ' {0} | {1} | {2} | {3} | {4} | {5} '.format(p.first_name, p.second_name, p.l_country, p.l_city, p.l_street, p.phone_number) + "\n")
+        f.close()
+
+
+
+def choice_your_hero():
+    Hero = None
+    try:
+        Hero = int(input('Введите код 1 если хотите добавить нового пользователя\n'
+                              'Введите код 2 если хотите найти пользователя\n'
+                              'Введите код 3 если хотите удалить пользователя\n'
+                              'Введите код 4 если хотите просмотреть всех доступных пользователей\n'
+                              'Введите код 5 если хотите изменить пользователя (если пользователя нет, он будет создан(не баг а фитча))\n'
+                              'Введите код 6 если хотите завершить работу\n'
+                              'Код операции --------->:  '))
+    except ValueError:
+        print('\n\nНе корректный ввод!\n')
+        print('Необходимо ввести целое число из предложенных \n\n')
+    return Hero
+
+
+operation = Users()
+while True:
+    Hero = choice_your_hero()
+    if Hero == 1:
+        operation.add_person()
+    elif Hero == 2:
+        requery = ((input('Для поиска пользователя введите его фамилию: ').capitalize(),
+                    input('Для поиска пользователя введите его имя: ').capitalize()))
+        print(find_person(requery))
+    elif Hero == 3:
+        requery = ((input('Для удаления пользователя введите его фамилию: ').capitalize(),
+                    input('Для удаления пользователя введите его имя: ').capitalize()))
+        operation.delete_person(requery)
+    elif Hero == 4:
+        operation.show_all_users()
+    elif Hero == 5:
+        requery = ((input('Для поиска пользователя введите его фамилию: ').capitalize(),
+                    input('Для поиска пользователя введите его имя: ').capitalize()))
+        operation.edit_person(requery)
+    elif Hero == 6:
+        break
+
+print("\nЗавершение работы ")
+print("Спасибо что выбрали нас ")
